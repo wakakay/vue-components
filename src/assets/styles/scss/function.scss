@@ -1,0 +1,61 @@
+@function px($n){
+  @return $n / 75 + rem;
+}
+
+$color-white: #fff;
+$color-black: #262626;
+$color-brown: #d6d1cb;
+$color-blue: #26a2ff;
+$color-light-grey: #616161;
+$color-medium-grey: #909090;
+$color-grey: #d9d9d9;
+$success-color: #4caf50;
+$error-color: #f44336;
+$warning-color: #ffc107;
+
+/* 头部高度 */
+$header-height: px(90);
+
+/* 默认边框颜色 */
+$border-color: #edeff3;
+
+/* 聚焦后的背景 */
+$active-background-color: #e5e5e5;
+
+/* Cell Component */
+$cell-value-color: #888;
+
+/* 按钮颜色 */
+$button-default-color: #656b79;
+$button-default-background-color: #f6f8fa;
+$button-default-plain-color: #5a5a5a;
+$button-default-box-shadow: 0 0 0.1rem #b8bbbf;
+$button-primary-color: #fff;
+$button-primary-background-color: #26a2ff;
+$button-danger-color: #fff;
+$button-danger-background-color: #ef4f4f;
+
+/* 弹出颜色 */
+$alert-default-background-color: #f3f4f5;
+$alert-success-background-color: #f0f9eb;
+$alert-error-background-color: #ffeeee;
+$alert-warning-background-color: #fdf5e6;
+
+/* cell-swipe 下button的颜色 */
+$swipe-button-color-gray: #c7c7cc;
+$swipe-button-color-yellow: #ff9c00;
+$swipe-button-color-blue: #26a2ff;
+$swipe-button-color-red: #ff3b30;
+
+/* z-index */
+$z-index-normal: 1;
+$z-index-slightly: 2;
+$z-index-highest: 10;
+
+[class^="icon-"] {
+    font-family: "iconfont" !important;
+    font-size: px(40);
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

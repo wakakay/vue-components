@@ -1,0 +1,354 @@
+@import './function.scss';
+
+.module-header {
+    height: $header-height;
+    color: $color-white;
+    &.is-fixed {
+        .module-header-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 8;
+        }
+    }
+    .module-header-content {
+        width: 100%;
+        height: $header-height;
+        padding: 0 px(20);
+        background: $color-blue;
+        text-align: center;
+        line-height: $header-height;
+        letter-spacing: px(3);
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    h1 {
+        font-size: px(30);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        flex: 1;
+        -webkit-flex: 1;
+    }
+
+    .module-header-button {
+        flex: .5;
+        -webkit-flex: .5;
+        &.pull-left {
+            text-align: left;
+        }
+        &.pull-right {
+            text-align: right;
+        }
+    }
+    .ui-button {
+        padding: 0 !important;
+        height: px(90);
+        background-color: transparent !important;
+        box-shadow: none !important;
+        .ui-button-text {
+            color: #fff;
+        }
+        .ui-button-icon {
+            color: $color-white;
+        }
+    }
+}
+
+.ui-button {
+    display: inline-block;
+    appearance: none;
+    border-radius: px(10);
+    border: 0;
+    box-sizing: border-box;
+    color: inherit;
+    font-size: px(26);
+    height: px(80);
+    outline: 0;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    line-height: px(80);
+
+    &::after {
+        background-color: $color-black;
+        content: " ";
+        opacity: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    &:not(.is-disabled):active::after {
+        opacity: .4;
+    }
+    &.is-disabled {
+        opacity: .6
+    }
+    // 按钮大小
+    &.ui-button-normal {
+        display: inline-block;
+        padding: 0 px(34);
+    }
+    &.ui-button-small {
+        display: inline-block;
+        font-size: px(20);
+        line-height: px(40);
+        padding: 0 px(20);
+        height: px(60);
+    }
+    &.ui-button-large {
+        display: block;
+        width: 100%;
+    }
+    // 按钮颜色
+    &.ui-button-default {
+        color: $button-default-color;
+        background-color: $button-default-background-color;
+        box-shadow: $button-default-box-shadow;
+        &.is-plain {
+            border: 1px solid $button-default-plain-color;
+            background-color: transparent;
+            box-shadow: none;
+            color: $button-default-plain-color;
+        }
+    }
+    &.ui-button-primary {
+        color: $button-primary-color;
+        background-color: $button-primary-background-color;
+        &.is-plain {
+            border: 1px solid $button-primary-background-color;
+            background-color: transparent;
+            color: $button-primary-background-color;
+        }
+    }
+    &.ui-button-danger {
+        color: $button-danger-color;
+        background-color: $button-danger-background-color;
+        &.is-plain {
+            border: 1px solid $button-danger-background-color;
+            background-color: transparent;
+            color: $button-danger-background-color;
+        }
+    }
+    .ui-button-icon {
+        vertical-align: middle;
+        display: inline-block;
+        color: $color-medium-grey;
+    }
+}
+
+.ui-alert {
+    position: relative;
+    padding: px(20);
+    &.ui-alert-default {
+        background-color: $alert-default-background-color;
+        color: #666;
+    }
+    &.ui-alert-success {
+        background-color: $alert-success-background-color;
+        color: $success-color;
+    }
+    &.ui-alert-error {
+        background-color: $alert-error-background-color;
+        color: $error-color;
+    }
+    &.ui-alert-warning {
+        background-color: $alert-warning-background-color;
+        color: $warning-color;
+    }
+    .ui-alert-icon {
+        vertical-align: middle;
+    }
+    .ui-alert-text {
+        vertical-align: middle;
+    }
+    .ui-alert-close {
+        font-size: px(20);
+        color: $color-grey;
+        position: absolute;
+        top: px(30);
+        right: px(20);
+        font-weight: 700;
+    }
+}
+
+.ui-toast {
+    position: fixed;
+    max-width: 80%;
+    border-radius: px(5);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    box-sizing: border-box;
+    text-align: center;
+    z-index: 1000;
+    padding: px(20) px(30);
+    &.placetop {
+        top: px(50);
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+    &.placemiddle {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+    &.placebottom {
+        bottom: px(50);
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+    i {
+        display: block;
+        text-align: center;
+        font-size: px(100);
+    }
+    .ui-toast-text {
+        font-size: px(28);
+        display: block;
+        text-align: center;
+    }
+}
+
+.ui-indicator {
+    .ui-indicator-wrapper {
+        top: 50%;
+        left: 50%;
+        position: fixed;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        border-radius: px(10);
+        background: rgba(0, 0, 0, .7);
+        color: #fff;
+        box-sizing: border-box;
+        text-align: center;
+        z-index: 1000;
+        padding: px(38);
+        i {
+            display: block;
+            text-align: center;
+            font-size: px(100);
+            animation: rotate .8s infinite linear;
+        }
+        .ui-indicator-text {
+            font-size: px(28);
+            display: block;
+            text-align: center;
+            padding-top: px(20);
+            min-width: px(150);
+        }
+    }
+    .ui-indicator-mask {
+        top: 0;
+        left: 0;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        background: transparent;
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 动作表单*/
+.ui-actionsheet {
+    .ui-actionsheet-list {
+        position: fixed;
+        width: 100%;
+        background: $color-grey;
+        text-align: center;
+        bottom: 0;
+        z-index:99;
+        &.bounce-up{
+            animation:bounceUp .3s ease-out;
+        }
+        .ui-actionsheet-listitem {
+            border-bottom: 1px solid $color-grey;
+        }
+        .ui-actionsheet-listitem,.ui-actionsheet-button {
+            display: block;
+            width: 100%;
+            height: px(80);
+            line-height: px(80);
+            font-size: px(30);
+            color: #333;
+            background-color: $color-white;
+            &:active {
+                background-color: $color-grey;
+            }
+        }
+    }
+    .ui-actionsheet-mask{
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: .5;
+        background: #000;
+        z-index:9;
+    }
+}
+
+@keyframes bounceUp {
+    0% { transform: translateY(3rem);}
+    100% { transform: translateY(0); }
+}
+.fade-enter-active,.fade-leave-active{
+    transition: opacity .5s
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0
+}
+/* 动作表单*/
+
+/* 进度调 */
+.ui-progress {
+    position: relative;
+    display: flex;
+    min-height: px(30);
+    .ui-progress-title{
+        font-size:px(28);
+        margin-right:px(20);
+        line-height:px(100);
+    }
+    & > * {
+        display: flex;
+        display: -webkit-box;
+    }
+    & *[slot="start"] {
+        margin-right: px(20);
+    }
+    & *[slot="end"] {
+        margin-left: px(20);
+    }
+    .ui-progress-content {
+        position: relative;
+        flex: 1;
+    }
+    .ui-progress-runway {
+        position: absolute;
+        transform: translate(0, -50%);
+        top: 50%;
+        left: 0;
+        right: 0;
+        background-color: $color-grey;
+        height: px(6);
+    }
+    .ui-progress-progress {
+        position: absolute;
+        display: block;
+        background-color: $color-blue;
+        top: 50%;
+        transform: translate(0, -50%);
+        width: 0;
+    }
+}
