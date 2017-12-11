@@ -25,6 +25,8 @@
         <router-link class="list" to="infinite-scroll">infinite-scroll</router-link>
         <router-link class="list" to="slide">slide-幻灯片</router-link>
         <router-link class="list" to="toast">toast-弹窗提示</router-link>
+        <router-link class="list" to="badge">badge</router-link>
+        <router-link class="list" to="switch">switch</router-link>
     </div>
 </template>
 
