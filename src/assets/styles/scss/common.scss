@@ -352,3 +352,98 @@
         width: 0;
     }
 }
+/*badge组件*/
+.ui-badge {
+    color: $color-white;
+    text-align: center;
+    display: inline-block;
+    &.ui-badge-success {
+        background-color: $success-color;
+    }
+    &.ui-badge-primary {
+        background-color: $color-blue;
+    }
+    &.ui-badge-error {
+        background-color: $error-color;
+    }
+    &.ui-badge-warning {
+        background-color: $warning-color;
+    }
+    &.ui-badge-large {
+        border-radius: px(28);
+        font-size: px(32);
+        padding: px(3) px(20);
+    }
+    &.ui-badge-normal {
+        border-radius: px(28);
+        font-size: px(28);
+        padding: px(3) px(16);
+    }
+    &.ui-badge-small {
+        border-radius: px(25);
+        font-size: px(25);
+        padding: px(3) px(12);
+    }
+}
+/*switch组件*/
+.ui-switch {
+    display: flex;
+    align-items: center;
+    position: relative;
+    * {
+        pointer-events: none;
+    }
+    .ui-switch-label {
+        margin-left: px(30);
+        display: inline-block;
+        font-size:px(26);
+        &:empty {
+            margin-left: 0;
+        }
+    }
+    .ui-switch-core {
+        display: inline-block;
+        position: relative;
+        width:px(100);
+        height:px(57);
+        border: 1px solid $color-grey;
+        border-radius: px(33);
+        box-sizing: border-box;
+        background: $color-grey;
+        &::after, &::before {
+            content: " ";
+            position:absolute;
+            left:0;
+            top:0;
+            transition:transform .3s;
+            border-radius: px(50);
+        }
+        &::after {
+            width:px(55);
+            height:px(55);
+            background-color: $color-white;
+            box-shadow: 0 px(2) px(3) rgba(0, 0, 0, .4);
+        }
+        &::before {
+            width:px(55);
+            height:px(55);
+            background-color: $color-grey;
+        }
+    }
+    .ui-switch-input {
+        display: none;
+        &:checked {
+            + .ui-switch-core {
+                border-color: $color-blue;
+                background-color: $color-blue;
+                &::before {
+                    transform: scale(0);
+                    display:none;
+                }
+                &::after {
+                    transform: translateX(px(43));
+                }
+            }
+        }
+    }
+}

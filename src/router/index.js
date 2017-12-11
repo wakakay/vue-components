@@ -70,6 +70,14 @@ export default [
                 component: resolve => require(['../example/toast.vue'], resolve)
             },
             {
+                path: '/badge',
+                component: resolve => require(['../example/badge.vue'], resolve)
+            },
+            {
+                path: '/switch',
+                component: resolve => require(['../example/switch.vue'], resolve)
+            },
+            {
                 path: '*',
                 redirect: '/index'
             }

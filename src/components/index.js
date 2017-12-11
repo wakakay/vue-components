@@ -12,5 +12,6 @@ export {default as listGroup} from './list-group'
 export {default as thumbGroup} from './thumb-group'
 export {default as actionSheet} from './action-sheet'
 export {default as progress} from './progress'
-
 export {default as alert} from './alert'
+export {default as badge} from './badge'
+export {default as switch} from './switch'
