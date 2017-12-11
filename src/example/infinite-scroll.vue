@@ -64,6 +64,12 @@
 
 <template>
     <div>
+        <v-header title="cell-swipe" fixed>
+            <router-link to="/" slot="left">
+                <v-button icon="back"></v-button>
+            </router-link>
+        </v-header>
+        
         <v-infinite-scroll
             :pull-down-method="refresh"
             @top-state-change="stateChange">
@@ -95,10 +101,7 @@
         data() {
             return {
                 dataList: [
-                    '(ง •̀_•́)ง', '(´・ω・`) ', '（/TДT)/ ', '>ㅂ<',
-                    'o(*≧▽≦)ツ', '(≖ ‿ ≖)✧', '(o^∇^o)ﾉ', ' (´・ω・)ﾉ',
-                    '(´・ω・`)', 'ヽ(･ω･｡)ﾉ', '(｀･ω･´)', '╰(*°▽°*)╯',
-                    '╮(￣▽￣)╭', '(￣▽￣)~*', '(⊙ˍ⊙)', '(￣0 ￣)y'
+                    1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25
                 ],
                 iconLink: ''
             };

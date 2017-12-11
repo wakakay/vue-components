@@ -8,7 +8,6 @@
     }
     
     .scroll-container {
-        height: 100%;
         flex: 1;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
@@ -28,7 +27,7 @@
 
 <template>
     <div class="module-infinite-scroll"
-         :style="{ height: containerHeight, transform: `translate3d(0, ${diff}px, 0)` }">
+         :style="{ height: wrapperHeight, transform: `translate3d(0, ${diff}px, 0)` }">
         
         <div v-if="pullDownMethod" ref="pullDown"
              :style="{ height: `${pullDownTextHeight}px`, marginTop: `${-pullDownTextHeight}px` }"
@@ -73,7 +72,7 @@
             },
             bottomBlockHeight: {
                 type: [Number, String],
-                default: 'auto'
+                default: 50
             },
             wrapperHeight: {
                 type: String,
@@ -85,11 +84,11 @@
             pullUpMethod: {
                 type: Function
             },
-            isThrottlePullDown: {
+            isThrottleTopPull: {
                 type: Boolean,
                 default: true
             },
-            isThrottlePullUp: {
+            isThrottleBottomPull: {
                 type: Boolean,
                 default: true
             },
@@ -123,7 +122,6 @@
                 scrollEl: null,
                 pullDownTextHeight: null,
                 pullUpTextHeight: null,
-                containerHeight: null,
                 startScrollTop: 0,
                 startY: 0,
                 currentY: 0,
@@ -135,8 +133,8 @@
                 bottomText: '',
                 state: '',
                 bottomReached: false,
-                throttleEmitPullDown: null,
-                throttleEmitPullUp: null,
+                throttleEmitTopPull: null,
+                throttleEmitBottomPull: null,
                 throttleEmitScroll: null,
                 throttleOnInfiniteScroll: null
             };
@@ -208,7 +206,7 @@
                 }
                 setTimeout(() => {
                     self.scrollTo(0);
-                    
+                
                     // 重置状态
                     setTimeout(() => {
                         self.state = '';
@@ -223,13 +221,13 @@
                     self.$el.style.transition = '';
                 }, duration);
             },
-            
+        
             checkBottomReached() {
                 let elem = this.scrollEl
                 let flag = elem.scrollTop + elem.offsetHeight + 1 >= elem.scrollHeight
                 return flag;
             },
-            
+    
             /**
              * 开始拖拽
              * @param event
@@ -241,7 +239,7 @@
                 self.startScrollTop = self.scrollEl.scrollTop;
                 self.bottomReached = self.checkBottomReached();
             },
-            
+    
             /**
              * 拖拽
              * @param event
@@ -251,16 +249,15 @@
                 self.currentY = event.touches[0].clientY;
                 self.distance = (self.currentY - self.startY) / self.distanceIndex + self.beforeDiff;
                 self.direction = self.distance > 0 ? 'down' : 'up';
-                
+            
                 if (self.startScrollTop === 0 && self.direction === 'down' && self.isTopBounce) {
                     event.preventDefault();
                     event.stopPropagation();
-                    
                     self.diff = self.distance;
-                    self.isThrottlePullDown ? self.throttleEmitPullDown(self.diff) : self.$emit('top-pull', self.diff);
-                    
+                    self.isThrottleTopPull ? self.throttleEmitTopPull(self.diff) : self.$emit('top-pull', self.diff);
+                
                     if (typeof self.pullDownMethod !== 'function') return;
-                    
+                
                     if (self.distance < self._topConfig.triggerDistance &&
                         self.state !== 'pull' && self.state !== 'loading') {
                         self.actionPull();
@@ -272,10 +269,10 @@
                     event.preventDefault();
                     event.stopPropagation();
                     self.diff = self.distance;
-                    self.isThrottlePullUp ? self.throttleEmitPullUp(self.diff) : self.$emit('bottom-pull', self.diff);
-                    
+                    self.isThrottleBottomPull ? self.throttleEmitBottomPull(self.diff) : self.$emit('bottom-pull', self.diff);
+                
                     if (typeof self.pullUpMethod !== 'function') return;
-                    
+                
                     if (Math.abs(self.distance) < self._bottomConfig.triggerDistance &&
                         self.state !== 'pull' && self.state !== 'loading') {
                         self.actionPull();
@@ -290,11 +287,14 @@
              */
             endDrag() {
                 let self = this;
+                console.log('结束', self.diff)
                 if (self.diff !== 0) {
                     if (self.state === 'trigger') {
                         self.actionLoading();
                         return;
                     }
+                
+                    // pull cancel
                     self.scrollTo(0);
                 }
             },
@@ -306,7 +306,7 @@
                 self.isThrottleScroll ? self.throttleEmitScroll(event) : self.$emit('scroll', event);
                 self.throttleOnInfiniteScroll();
             },
-            
+        
             /**
              * 绑定触摸事件
              * */
@@ -343,25 +343,16 @@
                 } else {
                     self.pullUpTextHeight = self.bottomBlockHeight;
                 }
-                
-                if (self.wrapperHeight == '100%') {
-                    let header = document.querySelector('.module-header');
-                    let headerHeight = (header && header.offsetHeight) || 0;
-                    self.containerHeight = document.body.clientHeight - headerHeight + 'px'
-                } else {
-                    self.containerHeight = self.wrapperHeight;
-                }
-                console.log(self.containerHeight )
             },
-            
+    
             createThrottleMethods() {
                 let self = this;
-                self.throttleEmitPullDown = self.throttleEmit(200, 300, 'top-pull');
-                self.throttleEmitPullUp = self.throttleEmit(200, 300, 'bottom-pull');
+                self.throttleEmitTopPull = self.throttleEmit(200, 300, 'top-pull');
+                self.throttleEmitBottomPull = self.throttleEmit(200, 300, 'bottom-pull');
                 self.throttleEmitScroll = self.throttleEmit(100, 150, 'scroll');
                 self.throttleOnInfiniteScroll = throttle(self.onInfiniteScroll, 100);
             },
-            
+    
             throttleEmit(delay, mustRunDelay = 0, eventName) {
                 let self = this;
                 const throttleMethod = function () {
@@ -369,10 +360,10 @@
                     args.unshift(eventName);
                     self.$emit.apply(self, args);
                 };
-                
+        
                 return throttle(throttleMethod, delay, mustRunDelay);
             },
-            
+    
             onInfiniteScroll() {
                 let self = this;
                 if (self.checkBottomReached()) {
