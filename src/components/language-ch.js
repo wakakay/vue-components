@@ -5,7 +5,6 @@ const TOP_DEFAULT_CONFIG = {
     doneText: '加载完成',
     failText: '加载失败',
     loadedStayTime: 400,
-    stayDistance: 50,
     triggerDistance: 70
 };
 
@@ -16,7 +15,6 @@ const BOTTOM_DEFAULT_CONFIG = {
     doneText: '加载完成',
     failText: '加载失败',
     loadedStayTime: 400,
-    stayDistance: 50,
     triggerDistance: 70
 };
 

@@ -30,16 +30,14 @@
 
 <script type="text/ecmascript-6">
     /**
-     * v-slide
-     * @module components/slide
-     * @desc moren
+     * v-title
+     * @module components/cell-title
+     * @desc 文本标题
      * @param {icon} [String] - 字体图标（不自动补全'icon-'）
      * @param {title} [String] - 文本文案
      *
      * @example
-     * <v-title
-     *   <v-cell-text></v-cell-text>
-     * </v-title>
+     * <v-title></v-title>
      */
     export default {
         name: 'cell-title',

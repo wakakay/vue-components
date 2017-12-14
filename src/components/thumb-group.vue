@@ -55,9 +55,9 @@
 
 <script type="text/ecmascript-6">
     /**
-     * v-list-group
-     * @module components/list-group
-     * @desc 按钮
+     * v-thumb-group
+     * @module components/thumb-group
+     * @desc 图片列表
      * @param {toLink} [String] - 路由链接的名称---【''】
      * @param {isLink} [Boolean] - 是否是链接---【true】 如果有父组件有对链接进行控制的话，必须设置为false
      * @param {title} [String] - 左边文字---【''】
@@ -66,7 +66,7 @@
      * @param {showType} [Number, String] - ui展示形式---【1】 只有3种,第三种可以展示三张图片，其他只有1张，多余的不展示
      *
      * @example
-     * <v-list-group>按钮</v-list-group>
+     * <v-thumb-group></v-thumb-group>
      */
     export default {
         name: 'thumb-group',

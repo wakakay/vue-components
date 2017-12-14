@@ -65,7 +65,7 @@
     /**
      * v-cell-swipe
      * @module components/cell-swipe
-     * @desc moren
+     * @desc 列表滑块
      * @param {title} [String] - 纯文本显示---【''】，如果是嵌套子组件则不需要，只需指定<slot name="content">嵌入的组件</slot>
      * @param {buttons} [Array] - 数组对象---【{
      *      title: String --

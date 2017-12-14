@@ -116,7 +116,13 @@ export function removeClass(el, cls) {
     }
 }
 
-/* */
+/**
+ * 函数节流方法
+ * @param fn 延迟执行的方法
+ * @param delay 延迟的时间
+ * @param mustRunDelay 间隔时间
+ * @returns {Function} 返回执行的回调函数
+ */
 export function throttle (fn, delay, mustRunDelay = 0) {
     let timer = null;
     let tStart;
