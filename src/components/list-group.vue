@@ -40,7 +40,7 @@
     /**
      * v-list-group
      * @module components/list-group
-     * @desc 按钮
+     * @desc 文本列表
      * @param {toLink} [String] - 路由链接的名称---【''】
      * @param {isLink} [Boolean] - 是否是链接---【true】 如果有父组件有对链接进行控制的话，必须设置为false
      * @param {icon} [String] - 字体图标---【''】
@@ -49,7 +49,7 @@
      * @param {colorStyle} [String] - 副标题的样式---【''】
      *
      * @example
-     * <v-list-group>按钮</v-list-group>
+     * <v-list-group></v-list-group>
      */
     export default {
         name: 'list-group',

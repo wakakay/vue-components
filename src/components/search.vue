@@ -90,8 +90,9 @@
 
 <script type="text/ecmascript-6">
     /**
-     * v-slide
-     * @module components/slide
+     * v-search
+     * @module components/search
+     * @desc 搜索
      * @param {value} [String] - 搜索框的默认值---【''】
      * @param {placeholder} [String] - 搜索框提示语---【请输入关键字...】
      * @param {autofocus} [Boolean] - 是否自动对焦---【true】

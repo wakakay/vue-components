@@ -32,7 +32,7 @@
     /**
      * v-cell-text
      * @module components/slide
-     * @desc moren
+     * @desc 文本内容
      * @param {icon} [String] - 字体图标（不自动补全'icon-'）
      * @param {title} [String] - 文本文案
      * @param {numbering} [String] - 编号(如1. 一)
