@@ -4,8 +4,7 @@ const TOP_DEFAULT_CONFIG = {
     loadingText: '加载中...',
     doneText: '加载完成',
     failText: '加载失败',
-    loadedStayTime: 400,
-    triggerDistance: 70
+    loadedStayTime: 400
 };
 
 const BOTTOM_DEFAULT_CONFIG = {
@@ -14,8 +13,8 @@ const BOTTOM_DEFAULT_CONFIG = {
     loadingText: '加载中...',
     doneText: '加载完成',
     failText: '加载失败',
-    loadedStayTime: 400,
-    triggerDistance: 70
+    failTipText: '点击刷新 查看更多内容',
+    loadedStayTime: 400
 };
 
 export { TOP_DEFAULT_CONFIG, BOTTOM_DEFAULT_CONFIG };

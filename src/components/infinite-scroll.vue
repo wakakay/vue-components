@@ -11,12 +11,14 @@
         height: 100%;
         flex: 1;
         overflow-y: auto;
+    }
+    .overflow-scrolling{
         -webkit-overflow-scrolling: touch;
     }
-    
     .module-infinite-scroll .action-block {
         position: relative;
         width: 100%;
+        background: #e4e4e4;
     }
     
     .default-text {
@@ -40,14 +42,14 @@
             </slot>
         </div>
         
-        <div class="scroll-container">
+        <div class="scroll-container overflow-scrolling" ref="scrollContainer">
             <slot></slot>
         </div>
         
-        <div v-if="pullUpMethod" ref="pullUp"
+        <div v-if="pullUpMethod" ref="pullUp" @click="getAgainLoading"
              :style="{ height: `${pullUpTextHeight}px`, marginBottom: `${-pullUpTextHeight}px` }"
              class="action-block">
-            <slot name="bottom-block"
+            <slot name="pull-up"
                   :state="state"
                   :state-text="pullUpText">
                 <p class="default-text">{{ pullUpText }}</p>
@@ -62,8 +64,8 @@
      * @module components/infinite-scroll
      * @desc 列表上拉更新下拉加载
      * @param {distanceIndex} [Number] - 上拉下拉的滚动阀值---【2】
-     * @param {topBlockHeight} [Number, String] - 下拉区域显示的内容---【'auto'】
-     * @param {bottomBlockHeight} [Number, String] - 上拉区域显示的内容---【'auto'】
+     * @param {pullDownBlockHeight} [Number, String] - 下拉区域显示的内容---【'auto'】
+     * @param {pullUpBlockHeight} [Number, String] - 上拉区域显示的内容---【'auto'】
      * @param {wrapperHeight} [Number, String] - 滚动容器高度---【'100%'】，默认值body的可视高度-header组件的高度，其他情况需要动态传入Number的值
      * @param {pullDownMethod} [Function] - 上拉更新之后的回调函数
      * @param {pullUpMethod} [Function] - 下拉加载更多之后的回调函数
@@ -79,7 +81,7 @@
      * <v-infinite-scroll>
      * </v-infinite-scroll>
      */
-    import {on, throttle} from '../config/uitls'
+    import {on, addClass, removeClass, throttle} from '../config/uitls'
     import { TOP_DEFAULT_CONFIG, BOTTOM_DEFAULT_CONFIG } from './language-ch';
     
     export default {
@@ -90,11 +92,11 @@
                 type: Number,
                 default: 2
             },
-            topBlockHeight: {
+            pullDownBlockHeight: {
                 type: [Number, String],
                 default: 'auto'
             },
-            bottomBlockHeight: {
+            pullUpBlockHeight: {
                 type: [Number, String],
                 default: 'auto'
             },
@@ -106,6 +108,9 @@
                 type: Function
             },
             pullUpMethod: {
+                type: Function
+            },
+            pullUpFail: {
                 type: Function
             },
             isThrottlePullDown: {
@@ -147,17 +152,22 @@
                 scrollEl: null, // 滚动容器
                 pullDownTextHeight: null, // 下拉内容高度
                 pullUpTextHeight: null, // 上拉内容高度
+                pullDowntriggerDistance: null, // 下拉触发距离
+                pullUptriggerDistance: null, // 上拉触发距离
                 containerHeight: null, // 内容容器高度
                 startScrollTop: 0, // 开始滚动的位置
                 startY: 0, // 开始触摸的开始位置
                 currentY: 0, // 当前触摸的位置
+                isReached: false, // 在滑动的时候是否到达顶部或底部
                 distance: 0, // 滑动的距离
                 direction: 0, // 滑动的方向
                 diff: 0, // 滑动上拉下拉的偏移量
                 beforeDiff: 0, // 开始触摸上拉下拉的偏移量
+                reachedTopDistance: 0,
                 pullDownText: '', // 上拉当前的文本内容
                 pullUpText: '', // 下拉当前的文本内容
                 state: '',  // 当前状态
+                isFail: false, // 是否加载数据出错
                 isReachedBottom: false, // 是否滚动到底部
                 throttleEmitPullDown: null, // 下拉更新节流
                 throttleEmitPullUp: null, // 上拉加载节流
@@ -182,9 +192,9 @@
             state(val) {
                 let self = this;
                 if (self.direction === 'down') {
-                    self.$emit('top-state-change', val);
+                    self.$emit('pull-down-state-change', val);
                 } else {
-                    self.$emit('bottom-state-change', val);
+                    self.$emit('pull-up-state-change', val);
                 }
             }
         },
@@ -211,17 +221,19 @@
             propsInit() {
                 let self = this;
                 // 下拉的文本高度
-                if (self.topBlockHeight === 'auto') {
+                if (self.pullDownBlockHeight === 'auto') {
                     self.pullDownTextHeight = self.$refs.pullDown.offsetHeight;
                 } else {
-                    self.pullDownTextHeight = self.topBlockHeight;
+                    self.pullDownTextHeight = self.pullDownBlockHeight;
                 }
+                self.pullDowntriggerDistance = self.pullDownTextHeight + 10;
                 // 上拉的文本高度
-                if (self.bottomBlockHeight === 'auto') {
+                if (self.pullUpBlockHeight === 'auto') {
                     self.pullUpTextHeight = self.$refs.pullDown.offsetHeight;
                 } else {
-                    self.pullUpTextHeight = self.bottomBlockHeight;
+                    self.pullUpTextHeight = self.pullUpBlockHeight;
                 }
+                self.pullUptriggerDistance = self.pullUpTextHeight + 10;
                 // 设置滚动区域的高度
                 if (self.wrapperHeight == '100%') {
                     let header = document.querySelector('.module-header');
@@ -313,7 +325,6 @@
                 self.state = 'loading';
                 if (self.direction === 'down') {
                     self.pullDownText = self._pullDownConfig.loadingText;
-                    /* eslint-disable no-useless-call */
                     self.pullDownMethod.call(self, self.actionLoaded);
                     self.scrollTo(self.pullDownTextHeight);
                 } else {
@@ -324,7 +335,7 @@
             },
     
             /**
-             * 加载完成之后的文本状态
+             * 等待数据更新完毕后的处理结果
              */
             actionLoaded(loadState = 'done') {
                 let self = this;
@@ -336,21 +347,41 @@
                         : self._pullDownConfig.failText;
                     loadedStayTime = self._pullDownConfig.loadedStayTime;
                 } else {
-                    self.pullUpText = loadState === 'done'
-                        ? self._pullUpConfig.doneText
-                        : self._pullUpConfig.failText;
+                    if (loadState === 'done') {
+                        self.pullUpText = self._pullUpConfig.doneText;
+                        self.isFail = false;
+                    } else {
+                        self.pullUpText = self._pullUpConfig.failTipText;
+                        self.isFail = true;
+                    }
                     loadedStayTime = self._pullUpConfig.loadedStayTime;
                 }
                 setTimeout(() => {
-                    self.scrollTo(0);
-            
+                    !self.isFail && self.scrollTo(0);
                     // 重置状态
                     setTimeout(() => {
                         self.state = '';
+                        self.addSpringback();
                     }, 200);
                 }, loadedStayTime);
             },
     
+            /**
+             * 添加滚动的回弹效果
+             */
+            addSpringback() {
+                let self = this;
+                addClass(self.scrollEl, 'overflow-scrolling');
+            },
+            
+            /**
+             * 取消滚动的回弹效果
+             */
+            canleSpringback() {
+                let self = this;
+                removeClass(self.scrollEl, 'overflow-scrolling');
+            },
+            
             /**
              * 回滚回到某个位置
              */
@@ -390,26 +421,35 @@
              */
             moveDrag(event) {
                 let self = this;
+                let scrollLoction = self.scrollEl.scrollTop;
                 // 当前触摸的位置
                 self.currentY = event.touches[0].clientY;
+                // 当前滑动的距离
                 self.distance = (self.currentY - self.startY) / self.distanceIndex + self.beforeDiff;
+                // 滑动的方向
                 self.direction = self.distance > 0 ? 'down' : 'up';
-        
+                
+                if (!self.isReached && scrollLoction === 0) {
+                    self.reachedTopDistance = self.distance;
+                    self.isReached = true;
+                }
+             
                 // 下拉更新
-                if (self.startScrollTop === 0 && self.direction === 'down' && self.isPullDownBounce) {
+                if (scrollLoction <= 0 && self.direction === 'down' && self.isPullDownBounce) {
                     event.preventDefault();
                     event.stopPropagation();
-            
-                    self.diff = self.distance;
+    
+                    self.canleSpringback();
+                    self.diff = self.distance - self.reachedTopDistance;
                     self.isThrottlePullDown ? self.throttleEmitPullDown(self.diff) : self.$emit('pull-down', self.diff);
             
                     if (typeof self.pullDownMethod !== 'function') return;
             
-                    if (self.distance < self._pullDownConfig.triggerDistance
+                    if (self.distance < self.pullDowntriggerDistance
                         && self.state !== 'pull'
                         && self.state !== 'loading') {
                         self.actionPull();
-                    } else if (self.distance >= self._pullDownConfig.triggerDistance
+                    } else if (self.distance >= self.pullDowntriggerDistance
                         && self.state !== 'trigger'
                         && self.state !== 'loading') {
                         self.actionTrigger();
@@ -417,19 +457,20 @@
                 }
                 // 上拉加载
                 else if (self.isReachedBottom && self.direction === 'up' && self.isPullUpBounce) {
+                    if (self.isFail) return;
                     event.preventDefault();
                     event.stopPropagation();
-                    // console.log('up', self.throttleEmitPullUp)
+                    self.canleSpringback();
                     self.diff = self.distance;
                     self.isThrottlePullUp ? self.throttleEmitPullUp(self.diff) : self.$emit('pull-up', self.diff);
             
                     if (typeof self.pullUpMethod !== 'function') return;
             
-                    if (Math.abs(self.distance) < self._pullUpConfig.triggerDistance
+                    if (Math.abs(self.distance) < self.pullUptriggerDistance
                         && self.state !== 'pull'
                         && self.state !== 'loading') {
                         self.actionPull();
-                    } else if (Math.abs(self.distance) >= self._pullUpConfig.triggerDistance
+                    } else if (Math.abs(self.distance) >= self.pullUptriggerDistance
                         &&self.state !== 'trigger'
                         && self.state !== 'loading') {
                         self.actionTrigger();
@@ -442,13 +483,17 @@
              */
             endDrag() {
                 let self = this;
+                self.addSpringback();
                 if (self.diff !== 0) {
                     if (self.state === 'trigger') {
                         self.actionLoading();
                         return;
                     }
-                    self.scrollTo(0);
+                    // 数据加载失败，保留提示框
+                    !self.isFail && self.scrollTo(0);
                 }
+                
+                self.isReached = false;
             },
     
             /**
@@ -459,6 +504,20 @@
                 self.isThrottleScroll ? self.throttleEmitScroll(event) : self.$emit('scroll', event);
                 self.throttleOnInfiniteScroll();
             },
+            
+            /**
+             * 重新加载数据
+             * @param event
+             */
+            getAgainLoading() {
+                let self = this;
+                self.state = 'loading';
+                if (self.direction === 'up') {
+                    self.pullUpText = self._pullUpConfig.loadingText;
+                    self.pullUpFail.call(self, self.actionLoaded);
+                    self.scrollTo(-self.pullUpTextHeight);
+                }
+            }
         }
     };
 </script>
